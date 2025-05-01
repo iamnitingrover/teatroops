@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import '@mantine/core/styles.css';
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from '@mantine/core';
+import {mantineTheme} from "@/theme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,21 +20,19 @@ export const metadata: Metadata = {
     description: 'I have followed setup instructions carefully',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="en" {...mantineHtmlProps}>
         <head>
-        <ColorSchemeScript />
+        <ColorSchemeScript /><title>Hello</title>
         </head>
 
         <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-            <MantineProvider>{children}</MantineProvider>
+            <MantineProvider theme={mantineTheme}>
+                {children}
+            </MantineProvider>
         </body>
     </html>
   );

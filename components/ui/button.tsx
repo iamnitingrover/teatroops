@@ -1,59 +1,74 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+import { Button as MantineButton, createTheme } from '@mantine/core';
 
-import { cn } from "@/lib/utils"
-
-const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-  {
-    variants: {
-      variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-      size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
-      },
+const useStyles = createTheme((theme) => ({
+  root: {
+    gap: '0.5rem',
+    '&[data-disabled]': {
+      pointerEvents: 'none',
+      opacity: 0.5,
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
+    '&:focus': {
+      outline: 'none',
+      borderColor: theme.colors[theme.primaryColor][5],
+      boxShadow: `0 0 0 3px ${theme.colors[theme.primaryColor][1]}`,
     },
-  }
-)
+    '&[data-invalid]': {
+      borderColor: theme.colors.red[6],
+      boxShadow: `0 0 0 3px ${theme.colors.red[1]}`,
+    },
+  },
+  default: {
+    backgroundColor: theme.colors[theme.primaryColor][6],
+    color: theme.white,
+    '&:hover': { backgroundColor: theme.colors[theme.primaryColor][7] },
+  },
+  destructive: {
+    backgroundColor: theme.colors.red[6],
+    color: theme.white,
+    '&:hover': { backgroundColor: theme.colors.red[7] },
+  },
+  outline: {
+    border: `1px solid ${theme.colors.gray[3]}`,
+    backgroundColor: theme.white,
+    '&:hover': {
+      backgroundColor: theme.colors.gray[0],
+      color: theme.black,
+    },
+  },
+  secondary: {
+    backgroundColor: theme.colors.gray[6],
+    color: theme.white,
+    '&:hover': { backgroundColor: theme.colors.gray[7] },
+  },
+  ghost: {
+    '&:hover': {
+      backgroundColor: theme.colors.gray[1],
+      color: theme.black,
+    },
+  },
+  link: {
+    color: theme.colors[theme.primaryColor][6],
+    textDecoration: 'underline',
+    '&:hover': { textDecoration: 'underline' },
+  },
+}));
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : "button"
+type ButtonProps = React.ComponentProps<typeof MantineButton> & {
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+};
 
+export function Button({ variant = 'default', className, ...props }: ButtonProps) {
+  const { classes, cx } = useStyles();
   return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+      <MantineButton
+          className={cx(classes.root, classes[variant], className)}
+          variant={variant === 'outline' ? 'outline' : 'filled'}
+          color={
+            variant === 'destructive' ? 'red' :
+                variant === 'secondary' ? 'gray' :
+                    undefined
+          }
+          {...props}
+      />
+  );
 }
-
-export { Button, buttonVariants }

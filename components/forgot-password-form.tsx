@@ -1,8 +1,8 @@
 'use client'
 
-import { cn } from '@/lib/utils'
+//import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
+import { Button } from '@mantine/core'
 import {
   Card,
   CardContent,

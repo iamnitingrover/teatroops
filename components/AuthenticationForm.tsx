@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Anchor,
   Button,
@@ -14,11 +16,13 @@ import {
 import { useForm } from '@mantine/form';
 import { upperFirst, useToggle } from '@mantine/hooks';
 import { GoogleButton } from './GoogleButton';
-import { TwitterButton } from './TwitterButton';
+import { AppleButton } from './AppleButton';
+import { createClient } from '@/lib/supabase/client';
 
 export function AuthenticationForm(props: PaperProps) {
   const [type, toggle] = useToggle(['login', 'register']);
   const form = useForm({
+    mode: 'uncontrolled',
     initialValues: {
       email: '',
       name: '',
@@ -28,19 +32,58 @@ export function AuthenticationForm(props: PaperProps) {
 
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
-      password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
+      password: (val) => (val.length <= 6 ? 'Password should include at least 8 characters' : null),
     },
   });
+  // const handleLogin = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   const supabase = createClient()
+  //   //setError(null)
+  //
+  //   try {
+  //     const { error } = await supabase.auth.signInWithPassword({
+  //       form.getvalues.email,
+  //       form.getvalues.password,
+  //     })
+  //     if (error) throw error
+  //     // Update this route to redirect to an authenticated route. The user already has an active session.
+  //     //router.push('/protected')
+  //   } catch (error: unknown) {
+  //     //setError(error instanceof Error ? error.message : 'An error occurred')
+  //   } finally {
+  //     //setIsLoading(false)
+  //   }
+  // }
+  const handleSocialLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const supabase = createClient()
+    // setIsLoading(true)
+    // setError(null)
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/auth/oauth?next=/protected`,
+        },
+      })
+
+      if (error) throw error
+    } catch (error: unknown) {
+      // setError(error instanceof Error ? error.message : 'An error occurred')
+      // setIsLoading(false)
+    }
+  }
 
   return (
       <Paper radius="md" p="xl" withBorder {...props}>
         <Text size="lg" fw={500}>
-          Welcome to Mantine, {type} with
+          Welcome to Teatroops, {type} with
         </Text>
 
         <Group grow mb="md" mt="md">
-          <GoogleButton radius="xl">Google</GoogleButton>
-          <TwitterButton radius="xl">Twitter</TwitterButton>
+          <GoogleButton radius="xl" onClick={handleSocialLogin}>Google</GoogleButton>
+          <AppleButton radius="xl" onClick={handleSocialLogin}>Twitter</AppleButton>
         </Group>
 
         <Divider label="Or continue with email" labelPosition="center" my="lg" />

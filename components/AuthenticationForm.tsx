@@ -27,34 +27,56 @@ export function AuthenticationForm(props: PaperProps) {
       email: '',
       name: '',
       password: '',
+      repeatPassword: '',
       terms: true,
     },
 
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
       password: (val) => (val.length <= 6 ? 'Password should include at least 8 characters' : null),
+        repeatPassword: (val, values) => (val !== values.password ? 'Passwords did not match' : null),
     },
   });
-  // const handleLogin = async (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   const supabase = createClient()
-  //   //setError(null)
-  //
-  //   try {
-  //     const { error } = await supabase.auth.signInWithPassword({
-  //       form.getvalues.email,
-  //       form.getvalues.password,
-  //     })
-  //     if (error) throw error
-  //     // Update this route to redirect to an authenticated route. The user already has an active session.
-  //     //router.push('/protected')
-  //   } catch (error: unknown) {
-  //     //setError(error instanceof Error ? error.message : 'An error occurred')
-  //   } finally {
-  //     //setIsLoading(false)
-  //   }
-  // }
-  const handleSocialLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const supabase = createClient()
+    //setError(null)
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) throw error
+      // Update this route to redirect to an authenticated route. The user already has an active session.
+      //router.push('/protected')
+    } catch (error: unknown) {
+      //setError(error instanceof Error ? error.message : 'An error occurred')
+    } finally {
+      //setIsLoading(false)
+    }
+  }
+  const handleGoogleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const supabase = createClient()
+    // setIsLoading(true)
+    // setError(null)
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/auth/oauth?next=/protected`,
+        },
+      })
+
+      if (error) throw error
+    } catch (error: unknown) {
+      // setError(error instanceof Error ? error.message : 'An error occurred')
+      // setIsLoading(false)
+    }
+  }
+  const handleAppleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     const supabase = createClient()
     // setIsLoading(true)
@@ -82,8 +104,8 @@ export function AuthenticationForm(props: PaperProps) {
         </Text>
 
         <Group grow mb="md" mt="md">
-          <GoogleButton radius="xl" onClick={handleSocialLogin}>Google</GoogleButton>
-          <AppleButton radius="xl" onClick={handleSocialLogin}>Twitter</AppleButton>
+          <GoogleButton radius="xl" onClick={handleGoogleLogin}>Google</GoogleButton>
+          <AppleButton radius="xl" onClick={handleAppleLogin}>Twitter</AppleButton>
         </Group>
 
         <Divider label="Or continue with email" labelPosition="center" my="lg" />

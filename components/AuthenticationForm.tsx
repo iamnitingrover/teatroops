@@ -138,9 +138,21 @@ export function AuthenticationForm(props: PaperProps) {
                 placeholder="Your password"
                 value={form.values.password}
                 onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
-                error={form.errors.password && 'Password should include at least 6 characters'}
+                error={form.errors.password && 'Password should include at least 8 characters'}
                 radius="md"
             />
+
+            {type === 'register' && (
+                <PasswordInput
+                    required
+                    label="Confirm Password"
+                    placeholder="Re-enter your password"
+                    value={form.values.repeatPassword}
+                    onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
+                    error={form.errors.repeatpassword && 'Password should include at least 8 characters'}
+                    radius="md"
+                />
+            )}
 
             {type === 'register' && (
                 <Checkbox

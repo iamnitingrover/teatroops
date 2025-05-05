@@ -103,6 +103,11 @@ export function AuthenticationForm(props: PaperProps) {
           Welcome to Teatroops, {type} with
         </Text>
 
+
+                      <Text size="sm" c="dimmed" mt={5}>
+                        {type === 'login'
+                          ? 'Don’t have an account yet?'
+                          : 'Already have an account?'}
         <Group grow mb="md" mt="md">
           <GoogleButton radius="xl" onClick={handleGoogleLogin}>Google</GoogleButton>
           <AppleButton radius="xl" onClick={handleAppleLogin}>Twitter</AppleButton>
